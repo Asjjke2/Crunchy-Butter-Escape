@@ -1,5 +1,5 @@
 -- ========================================================
--- واجهة المستخدم النهائية المستقرة [نسخة الإطار الأسود وإصلاح التكرار]
+-- واجهة المستخدم النهائية المستقرة [نسخة سحب الصورة والإطار الأسود]
 -- ========================================================
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -14,7 +14,7 @@ local ConfirmText = Instance.new("TextLabel")
 local YesBtn = Instance.new("TextButton")
 local NoBtn = Instance.new("TextButton")
 
--- الزر العائم المطور (نظام إطار أسود كامل)
+-- الزر العائم المطور (نظام إطار أسود كامل وقابل للسحب)
 local ToggleButton = Instance.new("Frame")
 local ToggleImage = Instance.new("ImageButton")
 local UICorner_Frame = Instance.new("UICorner")
@@ -95,6 +95,7 @@ NoBtn.TextSize = 14
 NoBtn.Font = Enum.Font.SourceSansBold
 
 -- إنشاء الزر العائم - إطار أسود كامل ومستقل
+ToggleButton.Name = "KhaledCustomDragButton"
 ToggleButton.Parent = ScreenGui
 ToggleButton.Size = UDim2.new(0, 48, 0, 48) -- حجم عادي ومناسب
 ToggleButton.Position = UDim2.new(0.02, 0, 0.4, 0)
@@ -117,18 +118,19 @@ UICorner_Image.CornerRadius = UDim.new(0, 4)
 UICorner_Image.Parent = ToggleImage
 
 -- ========================================================
--- دالة التحريك السلس (تطبيق نظام دلتا للتحريك)
+-- دالة التحريك السلس المحسنة (تدعم سحب الزر من الصورة مباشرة)
 -- ========================================================
-local function makeDraggable(frame)
+local function makeDraggable(frame, customHandle)
     local UserInputService = game:GetService("UserInputService")
     local dragging, dragInput, dragStart, startPos
+    local handle = customHandle or frame
     
     local function update(input)
         local delta = input.Position - dragStart
         frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
     
-    frame.InputBegan:Connect(function(input)
+    handle.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
@@ -142,7 +144,7 @@ local function makeDraggable(frame)
         end
     end)
     
-    frame.InputChanged:Connect(function(input)
+    handle.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
@@ -156,19 +158,33 @@ local function makeDraggable(frame)
 end
 
 makeDraggable(MainFrame)
-makeDraggable(ToggleButton)
+makeDraggable(ToggleButton, ToggleImage) -- الآن الصورة تعمل كمقبض سحب للزر بالكامل
 makeDraggable(ConfirmFrame)
 
--- فتح وإغلاق الواجهة
+-- فتح وإغلاق الواجهة (مع نظام منع التداخل مع السحب)
+local dragThreshold = 5
+local clickStartPos = Vector3.new()
+
+ToggleImage.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        clickStartPos = input.Position
+    end
+end)
+
+ToggleImage.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        local delta = (input.Position - clickStartPos).Magnitude
+        if delta < dragThreshold then -- إذا لم تكن حركة سحب، يتم فتح القائمة
+            MainFrame.Visible = true
+            ToggleButton.Visible = false
+        end
+    end
+end)
+
 CloseBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     ConfirmFrame.Visible = false
     ToggleButton.Visible = true
-end)
-
-ToggleImage.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
-    ToggleButton.Visible = false
 end)
 
 -- ========================================================
@@ -195,7 +211,7 @@ local function touchPart(part)
 end
 
 local foundButtons = {}
-local buttonToggles = {} -- جدول لحفظ حالة كل زر بشكل مستقل
+local buttonToggles = {}
 local winCounter = 1
 
 for _, v in pairs(Workspace:GetDescendants()) do
@@ -216,7 +232,7 @@ for _, v in pairs(Workspace:GetDescendants()) do
         and not foundButtons[btnPart] then
             
             foundButtons[btnPart] = true
-            buttonToggles[btnPart] = false -- مغلق في البداية
+            buttonToggles[btnPart] = false
             
             local NewBtn = Instance.new("TextButton")
             NewBtn.Parent = ButtonsScroll
@@ -230,12 +246,10 @@ for _, v in pairs(Workspace:GetDescendants()) do
             
             NewBtn.MouseButton1Click:Connect(function()
                 if not buttonToggles[btnPart] then
-                    -- إذا كان الزر غير شغال، تظهر نافذة التأكيد
                     pendingPart = btnPart
                     pendingButtonUI = NewBtn
                     ConfirmFrame.Visible = true
                 else
-                    -- إذا كان شغال وضغطت عليه، يقفل الفوز فوراً
                     activeWinLoop = nil
                     buttonToggles[btnPart] = false
                     NewBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
@@ -245,11 +259,9 @@ for _, v in pairs(Workspace:GetDescendants()) do
     end
 end
 
--- برمجة أزرار نافذة التأكيد (تكرار العمل دون مشاكل)
 YesBtn.MouseButton1Click:Connect(function()
     ConfirmFrame.Visible = false
     if pendingPart and pendingButtonUI then
-        -- إيقاف أي فوز تلقائي آخر شغال حالياً
         activeWinLoop = nil
         for part, _ in pairs(buttonToggles) do
             buttonToggles[part] = false
@@ -262,7 +274,6 @@ YesBtn.MouseButton1Click:Connect(function()
         
         task.wait(0.1)
         
-        -- تشغيل الفوز الجديد
         local currentLoop = pendingPart
         activeWinLoop = currentLoop
         buttonToggles[currentLoop] = true
@@ -273,7 +284,6 @@ YesBtn.MouseButton1Click:Connect(function()
                 touchPart(currentLoop)
                 task.wait(0.3)
             end
-            -- عند الإيقاف يرجع اللون طبيعي
             pendingButtonUI.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
             buttonToggles[currentLoop] = false
         end)
