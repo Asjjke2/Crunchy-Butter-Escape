@@ -1,5 +1,5 @@
 -- ========================================================
--- واجهة المستخدم المتقدمة [تعريب كامل + نظام تأكيد وتحريك]
+-- واجهة المستخدم النهائية المستقرة [نسخة الإطار الأسود وإصلاح التكرار]
 -- ========================================================
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -14,15 +14,17 @@ local ConfirmText = Instance.new("TextLabel")
 local YesBtn = Instance.new("TextButton")
 local NoBtn = Instance.new("TextButton")
 
--- الزر العائم (شعار ميدوريا - مثل دلتا)
-local ToggleButton = Instance.new("ImageButton")
-local UICorner_Toggle = Instance.new("UICorner")
+-- الزر العائم المطور (نظام إطار أسود كامل)
+local ToggleButton = Instance.new("Frame")
+local ToggleImage = Instance.new("ImageButton")
+local UICorner_Frame = Instance.new("UICorner")
+local UICorner_Image = Instance.new("UICorner")
 
 ScreenGui.Parent = game:GetService("CoreGui")
 ScreenGui.ResetOnSpawn = false
 
 -- القائمة الرئيسية
-MainFrame.Name = "KhaledArabHub"
+MainFrame.Name = "KhaledCrunchyFinalHub"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.Position = UDim2.new(0.35, 0, 0.3, 0)
@@ -32,12 +34,12 @@ MainFrame.Active = true
 Title.Parent = MainFrame
 Title.Size = UDim2.new(1, -40, 0, 45)
 Title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Title.Text = "سكربت خالد اسطوره "
+Title.Text = "سكربت خالد الاسطوره"
 Title.TextColor3 = Color3.fromRGB(255, 215, 0)
 Title.TextSize = 15
 Title.Font = Enum.Font.SourceSansBold
 
--- زر الإغلاق X
+-- زر الإغلاق المربع X
 CloseBtn.Parent = MainFrame
 CloseBtn.Size = UDim2.new(0, 40, 0, 45)
 CloseBtn.Position = UDim2.new(1, -40, 0, 0)
@@ -58,7 +60,7 @@ UIListLayout.Parent = ButtonsScroll
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 5)
 
--- إعداد نافذة التأكيد (مخفية بالبداية)
+-- إعداد نافذة التأكيد
 ConfirmFrame.Parent = ScreenGui
 ConfirmFrame.Size = UDim2.new(0, 240, 0, 130)
 ConfirmFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
@@ -68,7 +70,7 @@ ConfirmFrame.Active = true
 
 ConfirmText.Parent = ConfirmFrame
 ConfirmText.Size = UDim2.new(1, 0, 0, 60)
-ConfirmText.Text = "متاكد يا راكان يا زق تبي تشغله "
+ConfirmText.Text = "متاكد يا راكان يا زق  تبي تشغله؟"
 ConfirmText.TextColor3 = Color3.fromRGB(255, 255, 255)
 ConfirmText.TextSize = 16
 ConfirmText.Font = Enum.Font.SourceSansBold
@@ -77,33 +79,43 @@ ConfirmText.BackgroundTransparency = 1
 YesBtn.Parent = ConfirmFrame
 YesBtn.Size = UDim2.new(0, 90, 0, 35)
 YesBtn.Position = UDim2.new(0.08, 0, 0.55, 0)
-YesBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50) -- خلفية خضراء
+YesBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
 YesBtn.Text = "نعم"
-YesBtn.TextColor3 = Color3.fromRGB(255, 255, 255) -- كلام أبيض
+YesBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 YesBtn.TextSize = 14
 YesBtn.Font = Enum.Font.SourceSansBold
 
 NoBtn.Parent = ConfirmFrame
 NoBtn.Size = UDim2.new(0, 90, 0, 35)
 NoBtn.Position = UDim2.new(0.55, 0, 0.55, 0)
-NoBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50) -- خلفية حمراء
+NoBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
 NoBtn.Text = "لا"
-NoBtn.TextColor3 = Color3.fromRGB(255, 255, 255) -- كلام أبيض
+NoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 NoBtn.TextSize = 14
 NoBtn.Font = Enum.Font.SourceSansBold
 
--- إعداد الزر العائم بصورة ميدوريا (مخفي بالبداية)
+-- إنشاء الزر العائم - إطار أسود كامل ومستقل
 ToggleButton.Parent = ScreenGui
-ToggleButton.Size = UDim2.new(0, 45, 0, 45) -- الحجم العادي والمناسب للشاشة
+ToggleButton.Size = UDim2.new(0, 48, 0, 48) -- حجم عادي ومناسب
 ToggleButton.Position = UDim2.new(0.02, 0, 0.4, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- خلفية باللون الأسود للإطار
-ToggleButton.BackgroundTransparency = 0 -- إلغاء الشفافية لتظهر الخلفية السوداء
-ToggleButton.Image = "rbxassetid://117228230346733" -- معرف صورتك الجديدة المرفوعة
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- إطار أسود صريح
+ToggleButton.BackgroundTransparency = 0
 ToggleButton.Visible = false
 ToggleButton.Active = true
 
-UICorner_Toggle.CornerRadius = UDim.new(0, 6) -- زوايا ناعمة متناسقة مع الحجم الجديد
-UICorner_Toggle.Parent = ToggleButton
+UICorner_Frame.CornerRadius = UDim.new(0, 6)
+UICorner_Frame.Parent = ToggleButton
+
+-- الصورة داخل الإطار الأسود
+ToggleImage.Parent = ToggleButton
+ToggleImage.Size = UDim2.new(0, 40, 0, 40) -- أصغر قليلاً ليظهر الإطار الأسود حولها
+ToggleImage.Position = UDim2.new(0.5, -20, 0.5, -20)
+ToggleImage.BackgroundTransparency = 1
+ToggleImage.Image = "rbxassetid://117228230346733" -- معرف صورتك الجديدة
+
+UICorner_Image.CornerRadius = UDim.new(0, 4)
+UICorner_Image.Parent = ToggleImage
+
 -- ========================================================
 -- دالة التحريك السلس (تطبيق نظام دلتا للتحريك)
 -- ========================================================
@@ -147,20 +159,20 @@ makeDraggable(MainFrame)
 makeDraggable(ToggleButton)
 makeDraggable(ConfirmFrame)
 
--- فتح وإغلاق القائمة عبر الزر العائم و X
+-- فتح وإغلاق الواجهة
 CloseBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     ConfirmFrame.Visible = false
     ToggleButton.Visible = true
 end)
 
-ToggleButton.MouseButton1Click:Connect(function()
+ToggleImage.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     ToggleButton.Visible = false
 end)
 
 -- ========================================================
--- البرمجة والتشغيل الفعلي للـ Win بالتعريب
+-- البرمجة والتشغيل الفعلي للـ Win بالتعريب الكامل والإيقاف
 -- ========================================================
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -182,8 +194,8 @@ local function touchPart(part)
     end
 end
 
--- تجميع وتشغيل أزرار الـ Win
 local foundButtons = {}
+local buttonToggles = {} -- جدول لحفظ حالة كل زر بشكل مستقل
 local winCounter = 1
 
 for _, v in pairs(Workspace:GetDescendants()) do
@@ -204,29 +216,28 @@ for _, v in pairs(Workspace:GetDescendants()) do
         and not foundButtons[btnPart] then
             
             foundButtons[btnPart] = true
+            buttonToggles[btnPart] = false -- مغلق في البداية
             
             local NewBtn = Instance.new("TextButton")
             NewBtn.Parent = ButtonsScroll
             NewBtn.Size = UDim2.new(1, -10, 0, 35)
             NewBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            -- تعريب اسم الزر بالكامل
             NewBtn.Text = "تفعيل تلقائي: فوز " .. tostring(winCounter)
             NewBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
             winCounter = winCounter + 1
             
             ButtonsScroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y)
             
-            local toggled = false
             NewBtn.MouseButton1Click:Connect(function()
-                if not toggled then
-                    -- إظهار نافذة التأكيد لراكان قبل التشغيل
+                if not buttonToggles[btnPart] then
+                    -- إذا كان الزر غير شغال، تظهر نافذة التأكيد
                     pendingPart = btnPart
                     pendingButtonUI = NewBtn
                     ConfirmFrame.Visible = true
                 else
-                    -- إذا كان شغال وضغط عليه يقفله مباشرة بدون تأكيد
+                    -- إذا كان شغال وضغطت عليه، يقفل الفوز فوراً
                     activeWinLoop = nil
-                    toggled = false
+                    buttonToggles[btnPart] = false
                     NewBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 end
             end)
@@ -234,25 +245,37 @@ for _, v in pairs(Workspace:GetDescendants()) do
     end
 end
 
--- برمجة أزرار نافذة التأكيد
+-- برمجة أزرار نافذة التأكيد (تكرار العمل دون مشاكل)
 YesBtn.MouseButton1Click:Connect(function()
     ConfirmFrame.Visible = false
     if pendingPart and pendingButtonUI then
-        if activeWinLoop then
-            activeWinLoop = nil
-            task.wait(0.1)
+        -- إيقاف أي فوز تلقائي آخر شغال حالياً
+        activeWinLoop = nil
+        for part, _ in pairs(buttonToggles) do
+            buttonToggles[part] = false
+        end
+        for _, child in pairs(ButtonsScroll:GetChildren()) do
+            if child:IsA("TextButton") then
+                child.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            end
         end
         
-        activeWinLoop = pendingPart
+        task.wait(0.1)
+        
+        -- تشغيل الفوز الجديد
+        local currentLoop = pendingPart
+        activeWinLoop = currentLoop
+        buttonToggles[currentLoop] = true
         pendingButtonUI.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
         
         task.spawn(function()
-            local currentLoop = pendingPart
             while activeWinLoop == currentLoop do
                 touchPart(currentLoop)
                 task.wait(0.3)
             end
+            -- عند الإيقاف يرجع اللون طبيعي
             pendingButtonUI.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            buttonToggles[currentLoop] = false
         end)
     end
 end)
